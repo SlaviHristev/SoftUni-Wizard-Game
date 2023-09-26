@@ -1,0 +1,44 @@
+body{
+    font-size: 30px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.game-area{
+    position: relative;
+    background-color: rgb(61, 160, 244);
+    background: linear-gradient(0deg, rgb(61, 160, 244) 0%);
+    width: 100%;
+    height: 93vh;
+    margin: 0;
+}
+
+.game-start{
+    position: absolute;
+    width: 30%;
+    background-color: yellow;
+    border-radius: 30px;
+    text-align: center;
+    padding: 30px;
+    top: 100px;
+    left: 30%;
+    z-index: 1;
+}
+
+.score{
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+.hide{
+    display: none;
+}
+
+.wizard{
+    z-index: 100;
+    position: absolute;
+    width: 80px;
+    height: 100px;
+    background-image: url('../images/wizard.png');
+    background-size: cover;
+}
