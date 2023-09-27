@@ -49,3 +49,8 @@ body{
     background-image: url('../images/wizard.png');
     background-size: cover;
 }
+
+.fireball{
+    background-image: url('../images/wizard-fire.png');
+    background-size: cover;
+}

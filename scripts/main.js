@@ -14,6 +14,8 @@ let game = {
 let player = {
     x: 100,
     y: 100,
+    width: 0,
+    height: 0
 };
 
 gameStart.addEventListener('click', onGameStart);
@@ -25,8 +27,8 @@ function onGameStart() {
     wizard.style.top = player.y + 'px';
     wizard.style.left = player.x + 'px';
     gameArea.appendChild(wizard);
-    
-
+    player.width = wizard.offsetWidth;
+    player.height = wizard.offsetHeight;
     
     window.requestAnimationFrame(gameAction);
 }
@@ -46,21 +48,29 @@ function handleKeyUp(event) {
 
 function gameAction() {
     const wizard = document.querySelector('.wizard');
-    if (keys['KeyW']) {
+    if(keys['KeyW'] && player.y > 0){
         player.y -= game.speed * game.movingMultip;
-    } 
-    if (keys['KeyS']) {
+    }
+    if (keys['KeyS'] && player.y + player.height < gameArea.offsetHeight) {
         player.y += game.speed * game.movingMultip;
     }
-
-    if (keys['KeyA']) {
+    if(keys['KeyA'] && player.x > 0){
         player.x -= game.speed * game.movingMultip;
     }
-    if (keys['KeyD']) {
+
+    if (keys['KeyD'] && player.x + player.width < gameArea.offsetWidth) {
         player.x += game.speed * game.movingMultip;
+    }
+
+    if(keys['Space']){
+        wizard.classList.add('fireball')
+    }else{
+        wizard.classList.remove('fireball')
     }
 
     wizard.style.top = player.y + 'px';
     wizard.style.left = player.x + 'px';
     window.requestAnimationFrame(gameAction);
 }
+
+
