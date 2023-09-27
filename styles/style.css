@@ -24,6 +24,13 @@ body{
     z-index: 1;
 }
 
+.game-start:hover{
+    cursor: pointer;
+    animation: pulse 1s infinite;
+    animation-timing-function: linear; 
+}
+
+
 .score{
     background-color: black;
     color: white;
