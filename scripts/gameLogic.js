@@ -1,8 +1,4 @@
-const gameStart = document.querySelector('.game-start');
-const gameArea = document.querySelector('.game-area');
-const gameOver = document.querySelector('.game-over');
 const gameScore = document.querySelector('.score');
-
 
 let keys = {};
 
@@ -30,20 +26,6 @@ let scene = {
     lastBugSpawn: 0,
     isActiveGame: true,
 }
-gameStart.addEventListener('click', onGameStart);
-
-function onGameStart() {
-    gameStart.classList.add('hide');
-    const wizard = document.createElement('div');
-    wizard.classList.add('wizard');
-    wizard.style.top = player.y + 'px';
-    wizard.style.left = player.x + 'px';
-    gameArea.appendChild(wizard);
-    player.width = wizard.offsetWidth;
-    player.height = wizard.offsetHeight;
-    
-    window.requestAnimationFrame(gameAction);
-}
 
 document.addEventListener('keydown', handleKeyDown);
 document.addEventListener('keyup',handleKeyUp);
@@ -56,6 +38,15 @@ function handleKeyDown(event) {
 function handleKeyUp(event) {
     keys[event.code] = false;
     
+}
+
+function shootFireBall(){
+    let fireball = document.createElement('div');
+    fireball.classList.add('fireball')
+    fireball.style.top = (player.y + player.height / 3 - 5) + 'px';
+    fireball.x = player.x + player.width;
+    fireball.style.left = fireball.x + 'px'
+    gameArea.appendChild(fireball)
 }
 
 function gameAction(timestamp) {
@@ -154,33 +145,4 @@ function gameAction(timestamp) {
         window.requestAnimationFrame(gameAction);
 
     }
-}
-
-function shootFireBall(){
-    let fireball = document.createElement('div');
-    fireball.classList.add('fireball')
-    fireball.style.top = (player.y + player.height / 3 - 5) + 'px';
-    fireball.x = player.x + player.width;
-    fireball.style.left = fireball.x + 'px'
-    gameArea.appendChild(fireball)
-}
-
-function collision(firstElement, secondElement){
-    let firstEl = firstElement.getBoundingClientRect();
-    let secondEl = secondElement.getBoundingClientRect();
-
-    const firstTop = firstEl.top + window.scrollY;
-    const firstBottom = firstEl.bottom + window.scrollY;
-    const firstLeft = firstEl.left + window.scrollX;
-    const firstRight = firstEl.right + window.scrollX;
-    
-    return !(firstTop > secondEl.bottom ||
-        firstBottom < secondEl.top ||
-        firstRight < secondEl.left ||
-        firstLeft > secondEl.right);
-}
-
-function gameOverScreen(){
-    scene.isActiveGame = false;
-    gameOver.classList.remove('hide');
 }
