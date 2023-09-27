@@ -9,16 +9,23 @@ let keys = {};
 let game = {
     speed: 2,
     movingMultip: 4,
-    fireballMultip:6
+    fireballMultip:6,
+    fireInterval: 1000,
+    cloudpawnInterval: 2500
 };
 
 let player = {
     x: 100,
     y: 100,
     width: 0,
-    height: 0
+    height: 0,
+    lastTimeFired: 0
 };
 
+let scene = {
+    score:0,
+    lastcloudpawn: 0
+}
 gameStart.addEventListener('click', onGameStart);
 
 function onGameStart() {
@@ -47,7 +54,28 @@ function handleKeyUp(event) {
     
 }
 
-function gameAction() {
+function gameAction(timestamp) {
+    scene.score++;
+    if(timestamp - scene.lastcloudpawn > game.cloudpawnInterval + 20000 * Math.random()){
+
+        let cloud = document.createElement('div');
+        cloud.classList.add('cloud');
+        cloud.x = gameArea.offsetWidth - 200;
+        cloud.style.left = cloud.x + 'px';
+        cloud.style.top = (gameArea.offsetHeight - 200) * Math.random() + 'px';
+        gameArea.appendChild(cloud); 
+        scene.lastcloudpawn = timestamp;
+    }
+    let clouds = document.querySelectorAll('.cloud');
+    clouds.forEach(cloud =>{
+        cloud.x -= game.speed;
+        cloud.style.left = cloud.x + 'px';
+        if(cloud.x + clouds.offsetWidth <= 0){
+            cloud.parentElement.removeChild(cloud);
+        }
+    })
+
+
     const wizard = document.querySelector('.wizard');
     let  fireballs = document.querySelectorAll('.fireball');
     fireballs.forEach(ball =>{
@@ -71,15 +99,18 @@ function gameAction() {
         player.x += game.speed * game.movingMultip;
     }
 
-    if(keys['Space']){
+    if(keys['Space'] && timestamp - player.lastTimeFired > game.fireInterval){
         wizard.classList.add('cast')
         shootFireBall(player);
+        player.lastTimeFired = timestamp;
     }else{
         wizard.classList.remove('cast')
     }
 
     wizard.style.top = player.y + 'px';
     wizard.style.left = player.x + 'px';
+
+    gameScore.textContent = scene.score + ' pts.'
     window.requestAnimationFrame(gameAction);
 }
 
