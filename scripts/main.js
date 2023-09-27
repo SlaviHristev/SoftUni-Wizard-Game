@@ -11,7 +11,9 @@ let game = {
     movingMultip: 4,
     fireballMultip:6,
     fireInterval: 1000,
-    cloudpawnInterval: 2500
+    cloudpawnInterval: 2500,
+    bugsSpawnInterval: 1000,
+    bugKillBonus:2000
 };
 
 let player = {
@@ -24,7 +26,9 @@ let player = {
 
 let scene = {
     score:0,
-    lastcloudpawn: 0
+    lastcloudpawn: 0,
+    lastBugSpawn: 0,
+    isActiveGame: true,
 }
 gameStart.addEventListener('click', onGameStart);
 
@@ -55,7 +59,9 @@ function handleKeyUp(event) {
 }
 
 function gameAction(timestamp) {
+    const wizard = document.querySelector('.wizard');
     scene.score++;
+    
     if(timestamp - scene.lastcloudpawn > game.cloudpawnInterval + 20000 * Math.random()){
 
         let cloud = document.createElement('div');
@@ -75,8 +81,26 @@ function gameAction(timestamp) {
         }
     })
 
+    if(timestamp - scene.lastBugSpawn > game.bugsSpawnInterval + 5000 * Math.random()){
 
-    const wizard = document.querySelector('.wizard');
+        let bug = document.createElement('div');
+        bug.classList.add('bug');
+        bug.x = gameArea.offsetWidth - 60;
+        bug.style.left = bug.x + 'px';
+        bug.style.top = (gameArea.offsetHeight - 60) * Math.random() + 'px';
+        gameArea.appendChild(bug); 
+        scene.lastBugSpawn = timestamp;
+    }
+    let bugs = document.querySelectorAll('.bug');
+    bugs.forEach(bug =>{
+        bug.x -= game.speed *3;
+        bug.style.left = bug.x + 'px';
+        if(bug.x + bug.offsetWidth <= 0){
+            bug.parentElement.removeChild(bug);
+            
+        }
+    })
+    
     let  fireballs = document.querySelectorAll('.fireball');
     fireballs.forEach(ball =>{
         ball.x += game.speed * game.fireballMultip;
@@ -85,6 +109,21 @@ function gameAction(timestamp) {
             ball.parentElement.removeChild(ball)
         }
     })
+
+    bugs.forEach(bug =>{
+        if(collision(wizard,bug)){
+            gameOverScreen();
+        }
+        fireballs.forEach(fireball =>{
+            if(collision(fireball,bug)){
+                bug.parentElement.removeChild(bug);
+                fireball.parentElement.removeChild(fireball)
+                scene.score += game.bugKillBonus;
+            }
+        })
+    })
+
+
     if(keys['KeyW'] && player.y > 0){
         player.y -= game.speed * game.movingMultip;
     }
@@ -111,7 +150,10 @@ function gameAction(timestamp) {
     wizard.style.left = player.x + 'px';
 
     gameScore.textContent = scene.score + ' pts.'
-    window.requestAnimationFrame(gameAction);
+    if(scene.isActiveGame === true){
+        window.requestAnimationFrame(gameAction);
+
+    }
 }
 
 function shootFireBall(){
@@ -123,3 +165,22 @@ function shootFireBall(){
     gameArea.appendChild(fireball)
 }
 
+function collision(firstElement, secondElement){
+    let firstEl = firstElement.getBoundingClientRect();
+    let secondEl = secondElement.getBoundingClientRect();
+
+    const firstTop = firstEl.top + window.scrollY;
+    const firstBottom = firstEl.bottom + window.scrollY;
+    const firstLeft = firstEl.left + window.scrollX;
+    const firstRight = firstEl.right + window.scrollX;
+    
+    return !(firstTop > secondEl.bottom ||
+        firstBottom < secondEl.top ||
+        firstRight < secondEl.left ||
+        firstLeft > secondEl.right);
+}
+
+function gameOverScreen(){
+    scene.isActiveGame = false;
+    gameOver.classList.remove('hide');
+}
