@@ -9,6 +9,7 @@ let keys = {};
 let game = {
     speed: 2,
     movingMultip: 4,
+    fireballMultip:6
 };
 
 let player = {
@@ -48,6 +49,14 @@ function handleKeyUp(event) {
 
 function gameAction() {
     const wizard = document.querySelector('.wizard');
+    let  fireballs = document.querySelectorAll('.fireball');
+    fireballs.forEach(ball =>{
+        ball.x += game.speed * game.fireballMultip;
+        ball.style.left = ball.x + 'px'
+        if(ball.x + ball.offsetWidth > gameArea.offsetWidth){
+            ball.parentElement.removeChild(ball)
+        }
+    })
     if(keys['KeyW'] && player.y > 0){
         player.y -= game.speed * game.movingMultip;
     }
@@ -63,9 +72,10 @@ function gameAction() {
     }
 
     if(keys['Space']){
-        wizard.classList.add('fireball')
+        wizard.classList.add('cast')
+        shootFireBall(player);
     }else{
-        wizard.classList.remove('fireball')
+        wizard.classList.remove('cast')
     }
 
     wizard.style.top = player.y + 'px';
@@ -73,4 +83,12 @@ function gameAction() {
     window.requestAnimationFrame(gameAction);
 }
 
+function shootFireBall(){
+    let fireball = document.createElement('div');
+    fireball.classList.add('fireball')
+    fireball.style.top = (player.y + player.height / 3 - 5) + 'px';
+    fireball.x = player.x + player.width;
+    fireball.style.left = fireball.x + 'px'
+    gameArea.appendChild(fireball)
+}
 
