@@ -1,5 +1,4 @@
 const gameScore = document.querySelector('.score');
-
 let keys = {};
 
 let game = {
@@ -39,7 +38,7 @@ function handleKeyUp(event) {
     keys[event.code] = false;
     
 }
-
+//fireball function
 function shootFireBall(){
     let fireball = document.createElement('div');
     fireball.classList.add('fireball')
@@ -48,11 +47,12 @@ function shootFireBall(){
     fireball.style.left = fireball.x + 'px'
     gameArea.appendChild(fireball)
 }
-
+//main function
 function gameAction(timestamp) {
     const wizard = document.querySelector('.wizard');
     scene.score++;
     
+    //generate clouds
     if(timestamp - scene.lastcloudpawn > game.cloudpawnInterval + 20000 * Math.random()){
 
         let cloud = document.createElement('div');
@@ -71,7 +71,7 @@ function gameAction(timestamp) {
             cloud.parentElement.removeChild(cloud);
         }
     })
-
+    //generate bugs
     if(timestamp - scene.lastBugSpawn > game.bugsSpawnInterval + 5000 * Math.random()){
 
         let bug = document.createElement('div');
@@ -92,6 +92,7 @@ function gameAction(timestamp) {
         }
     })
     
+    //create fireballs movement
     let  fireballs = document.querySelectorAll('.fireball');
     fireballs.forEach(ball =>{
         ball.x += game.speed * game.fireballMultip;
@@ -100,7 +101,7 @@ function gameAction(timestamp) {
             ball.parentElement.removeChild(ball)
         }
     })
-
+    //killing bugs with collision and game over logic
     bugs.forEach(bug =>{
         if(collision(wizard,bug)){
             gameOverScreen();
@@ -115,6 +116,7 @@ function gameAction(timestamp) {
     })
 
 
+    //movement logic
     if(keys['KeyW'] && player.y > 0){
         player.y -= game.speed * game.movingMultip;
     }
